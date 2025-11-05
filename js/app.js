@@ -1,6 +1,6 @@
 // 全局变量
 let uploadedImages = [];
-let apiKey = localStorage.getItem('volcanoApiKey') || '';
+let apiKey = localStorage.getItem('volcanoApiKey') || 'DUMMY_API_KEY';
 
 // DOM元素
 const dropArea = document.getElementById('drop-area');
@@ -232,58 +232,24 @@ function startAnalysis() {
         });
 }
 
-// 调用火山引擎API
+// 调用火山引擎API（通过本地代理）
 async function callVolcanoAPI(base64Images) {
-    // 这里是模拟API调用，实际项目中需要替换为真实的API调用
-    // 由于没有实际的API密钥和接口，这里使用模拟数据
-    
-    // 模拟API调用延迟
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // 返回模拟数据
-    return {
-        personality: {
-            tags: ['温柔', '理性', '好学'],
-            description: '善于分享生活，对事物充满好奇，理性思考问题，文字表达能力强。'
-        },
-        interests: ['旅行', '美食', '科技', '艺术'],
-        pursuitSuggestions: [
-            '分享自己的旅行经历中的小故事',
-            '评论美食照片中的亮点和特色',
-            '一起探讨科技话题的新进展',
-            '关注对方的艺术品味和审美偏好'
-        ],
-        chatTopics: [
-            '旅行中的有趣趣事',
-            'Pokemon的收藏',
-            'AI无人驾驶的看法',
-            '皮克斯电影的画面风格'
-        ],
-        dateSuggestions: [
-            '动漫主题咖啡厅',
-            '科技展览参观',
-            '艺术画廊或工作室',
-            '尝试新开的网红餐厅'
-        ]
-    };
-    
-    // 实际API调用代码（需要替换为实际的API端点和参数）
-    /*
     try {
-        const response = await fetch('https://api.volcengine.com/doubao/v1.6/thinking', {
+        const response = await fetch('/api/analyze', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 images: base64Images,
-                prompt: '分析这些朋友圈图片，推测用户的性格特点、兴趣爱好，并提供社交互动建议'
+                prompt: '分析这些朋友圈图片，推测用户的性格特点、兴趣爱好，并提供社交互动建议',
+                apiKey
             })
         });
         
         if (!response.ok) {
-            throw new Error(`API请求失败: ${response.status}`);
+            const errText = await response.text();
+            throw new Error(`API请求失败: ${response.status} ${errText}`);
         }
         
         return await response.json();
@@ -291,7 +257,6 @@ async function callVolcanoAPI(base64Images) {
         console.error('API调用出错:', error);
         throw error;
     }
-    */
 }
 
 // 处理分析结果
